@@ -2,14 +2,14 @@
 
 import React, { useState, useCallback } from 'react';
 import { Conversation } from '@elevenlabs/client';
-import { Mic, MicOff, PhoneOff } from 'lucide-react';
+import { Mic, PhoneOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const AGENT_ID = process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID || "agent_1401kgk3djf5fnjbnqzz215r460n";
 
 export default function VoiceAgent() {
   const [status, setStatus] = useState<'idle' | 'connecting' | 'active' | 'error'>('idle');
-  const [conversation, setConversation] = useState<Conversation | null>(null);
+  const [conversation, setConversation] = useState<any>(null);
 
   const startConversation = useCallback(async () => {
     try {
@@ -18,6 +18,7 @@ export default function VoiceAgent() {
       // Request microphone access
       await navigator.mediaDevices.getUserMedia({ audio: true });
       
+      // @ts-ignore
       const conv = await Conversation.startSession({
         agentId: AGENT_ID,
         onConnect: () => {
@@ -28,11 +29,11 @@ export default function VoiceAgent() {
           setStatus('idle');
           console.log('Disconnected');
         },
-        onError: (error) => {
+        onError: (error: any) => {
           console.error('Conversation error:', error);
           setStatus('error');
         },
-        onModeChange: (mode) => {
+        onModeChange: (mode: any) => {
           console.log('Mode changed:', mode);
         }
       });
